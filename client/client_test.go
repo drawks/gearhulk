@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	rt "github.com/drawks/gearhulk/pkg/runtime"
 	"github.com/appscode/go/log"
+	rt "github.com/drawks/gearhulk/pkg/runtime"
 )
 
 const (

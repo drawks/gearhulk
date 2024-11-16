@@ -13,8 +13,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/drawks/gearhulk/pkg/runtime"
 	"github.com/appscode/go/log"
+	"github.com/drawks/gearhulk/pkg/runtime"
 )
 
 var (

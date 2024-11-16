@@ -14,11 +14,11 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/appscode/go/log"
 	"github.com/drawks/gearhulk/pkg/metrics"
 	. "github.com/drawks/gearhulk/pkg/runtime"
 	"github.com/drawks/gearhulk/pkg/storage"
-	"github.com/drawks/gearhulk/pkg/storage/leveldb"
-	"github.com/appscode/go/log"
+	leveldbq "github.com/drawks/gearhulk/pkg/storage/leveldb"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	lberror "github.com/syndtr/goleveldb/leveldb/errors"

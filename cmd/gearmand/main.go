@@ -7,7 +7,6 @@ import (
 	"os"
 
 	logs "github.com/appscode/go/log/golog"
-	"github.com/appscode/go/version"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -26,7 +25,6 @@ func main() {
 	}
 	rootCmd.PersistentFlags().AddGoFlagSet(flag.CommandLine)
 
-	rootCmd.AddCommand(version.NewCmdVersion())
 	rootCmd.AddCommand(NewCmdRun())
 
 	if err := rootCmd.Execute(); err != nil {

@@ -4,8 +4,8 @@ import (
 	_ "net/http/pprof"
 	"os"
 
-	gearmand "github.com/drawks/gearhulk/pkg/server"
 	"github.com/appscode/go/runtime"
+	gearmand "github.com/drawks/gearhulk/pkg/server"
 	"github.com/spf13/cobra"
 )
 
