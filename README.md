@@ -39,13 +39,13 @@ Both of them:
 Usage
 =====
 ## Server
-	how to start gearmand?
+	how to start the gearman server?
 
-	./gearmand run --v=3 --addr="0.0.0.0:4730"
+	./igearhulk server --v=3 --addr="0.0.0.0:4730"
 
 	how to specify leveldb location?
 
-	./gearmand run --v=3 --storage-dir=/my-dir --addr="0.0.0.0:4730"
+	./gearihulk server --v=3 --storage-dir=/my-dir --addr="0.0.0.0:4730"
 
 how to export metrics to Prometheus:
 
@@ -69,7 +69,7 @@ how to query job status ?
 
 how to change monitor address ?
 
-	./gearmand run --v=3 --web.addr=:4567
+	./gearhulk server --v=3 --web.addr=:4567
 
 ## Worker
 
@@ -128,6 +128,7 @@ fmt.Printf("%#v\n", status)
 Build Instructions
 ==================
 ```sh
+go build
 ```
 
 Acknowledgement

@@ -16,7 +16,7 @@ in an easy way.
 
 	import "github.com/drawks/gearhulk/worker"
 */
-package g2
+package main
 
 import (
 	_ "github.com/drawks/gearhulk/client"
