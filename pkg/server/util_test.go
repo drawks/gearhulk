@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	. "github.com/appscode/g2/pkg/runtime"
+	. "github.com/drawks/gearhulk/pkg/runtime"
 )
 
 func TestDecodeArgs(t *testing.T) {

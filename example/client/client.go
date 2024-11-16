@@ -5,8 +5,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/appscode/g2/client"
-	rt "github.com/appscode/g2/pkg/runtime"
+	"github.com/drawks/gearhulk/client"
+	rt "github.com/drawks/gearhulk/pkg/runtime"
 )
 
 func main() {

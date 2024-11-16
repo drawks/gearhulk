@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	. "github.com/appscode/g2/pkg/runtime"
+	. "github.com/drawks/gearhulk/pkg/runtime"
 	"github.com/appscode/go/log"
 )
 

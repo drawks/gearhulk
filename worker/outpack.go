@@ -3,7 +3,7 @@ package worker
 import (
 	"encoding/binary"
 
-	rt "github.com/appscode/g2/pkg/runtime"
+	rt "github.com/drawks/gearhulk/pkg/runtime"
 )
 
 // Worker side job

@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	rt "github.com/appscode/g2/pkg/runtime"
-	"github.com/appscode/g2/worker"
+	rt "github.com/drawks/gearhulk/pkg/runtime"
+	"github.com/drawks/gearhulk/worker"
 )
 
 func ExampleWorker() {

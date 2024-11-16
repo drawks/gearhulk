@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	rt "github.com/appscode/g2/pkg/runtime"
+	rt "github.com/drawks/gearhulk/pkg/runtime"
 	"github.com/appscode/go/log"
 )
 

@@ -1,54 +1,40 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/appscode/g2)](https://goreportcard.com/report/github.com/appscode/g2)
-[![Build Status](https://travis-ci.org/appscode/g2.svg?branch=master)](https://travis-ci.org/appscode/g2)
-[![codecov](https://codecov.io/gh/appscode/g2/branch/master/graph/badge.svg)](https://codecov.io/gh/appscode/g2)
-[![Docker Pulls](https://img.shields.io/docker/pulls/appscode/gearmand.svg)](https://hub.docker.com/r/appscode/gearmand/)
-[![Slack](https://slack.appscode.com/badge.svg)](https://slack.appscode.com)
-[![Twitter](https://img.shields.io/twitter/follow/appscodehq.svg?style=social&logo=twitter&label=Follow)](https://twitter.com/intent/follow?screen_name=AppsCodeHQ)
+[![Go Report Card](https://goreportcard.com/badge/github.com/drawks/gearhulk)](https://goreportcard.com/report/github.com/drawks/gearhulk)
+[![codecov](https://codecov.io/gh/drawks/gearhulk/branch/master/graph/badge.svg)](https://codecov.io/gh/drawks/gearhulk)
 
-```
-This project is not maintained any more. 
-```
-
-G2
+Gearhulk
 ==========
 
-G2 is a modern implementation of [Gearman](http://gearman.org/) in [Go Programming Language](http://golang.org). G2 includes various improvements in retry and connection logic for using in Kubernetes. It comes with built-in Prometheus ready metrics. G2 also implements scheduled jobs via cron expressions.
+Gearhulk is a modern implementation of [Gearman](http://gearman.org/) in [Go Programming Language](http://golang.org). Gearhulk includes various improvements in retry and connection logic for using in Kubernetes. It comes with built-in Prometheus ready metrics. Gearhulk also implements scheduled jobs via cron expressions.
 
 
 The client package is used for sending jobs to the Gearman job server and getting responses from the server.
 
-	"github.com/appscode/g2/client"
+	"github.com/drawks/gearhulk/client"
 
 The worker package will help developers in developing Gearman worker service easily.
 
-	"github.com/appscode/g2/worker"
+	"github.com/drawks/gearhulk/worker"
 	    
 The gearadmin package implements a client for the [gearman admin protocol](http://gearman.org/protocol/).
 
-    "github.com/appscode/g2/gearadmin"
+    "github.com/drawks/gearhulk/gearadmin"
 
-[![GoDoc](https://godoc.org/github.com/appscode/g2?status.png)](https://godoc.org/github.com/appscode/g2)
+[![GoDoc](https://godoc.org/github.com/drawks/gearhulk?status.png)](https://godoc.org/github.com/drawks/gearhulk)
 
 Install
 =======
 
 Install the client package:
 
-> $ go get github.com/appscode/g2/client
+> $ go get github.com/drawks/gearhulk/client
 
 Install the worker package:
 
-> $ go get github.com/appscode/g2/worker
+> $ go get github.com/drawks/gearhulk/worker
 
 Both of them:
 
-> $ go get github.com/appscode/g2
-
-G2 gearman server can be installed via pre-built Docker images mentioned in the Github releases. G2 gearman server can also be installed in Kubernetes via [Helm](https://helm.sh/) using the [chart](/chart/g2) included in this repository or from official charts repository. To install the chart with the release name `my-release`:
-```bash
-$ helm install chart/g2 --name my-release
-```
-To see the detailed configuration options, visit [here](/chart/g2/README.md).
+> $ go get github.com/drawks/gearhulk
 
 Usage
 =====
@@ -142,27 +128,11 @@ fmt.Printf("%#v\n", status)
 Build Instructions
 ==================
 ```sh
-# dev build
-./hack/make.py
-
-# Install/Update dependency (needs glide)
-glide slow
-
-# Build Docker image
-./hack/docker/setup.sh
-
-# Push Docker image (https://hub.docker.com/r/appscode/gearmand/)
-./hack/docker/setup.sh push
-
-# Deploy to Kubernetes (one time setup operation)
-kubectl run gearmand --image=appscode/gearmand:<tag> --replica=1
-
-# Deploy new image
-kubectl set image deployment/gearmand tc=appscode/gearmand:<tag>
 ```
 
 Acknowledgement
 ===============
+ * Forked from https://github.com/appscode/gw
  * Client and Worker package forked from https://github.com/mikespook/gearman-go
  * Server package forked from https://github.com/ngaut/gearmand
  * Gearadmin client forked from https://github.com/Clever/gearadmin
@@ -172,6 +142,7 @@ License
 ==================================
 Apache 2.0. See [LICENSE](LICENSE).
 
+- Copyright (C) 2024 Dave Rawks <dave@rawks.io>
 - Copyright (C) 2016-2017 by AppsCode Inc.
 - Copyright (C) 2016 by Clever.com (portions of gearadmin client)
 - Copyright (c) 2014 [ngaut](https://github.com/ngaut) (portions of gearmand)

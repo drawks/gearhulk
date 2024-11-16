@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/appscode/g2/pkg/runtime"
+	"github.com/drawks/gearhulk/pkg/runtime"
 )
 
 var worker *Worker

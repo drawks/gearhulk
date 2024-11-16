@@ -9,16 +9,16 @@ The protocols were written in pure Go. It contains two sub-packages:
 The client package is used for sending jobs to the Gearman job server,
 and getting responses from the server.
 
-	import "github.com/appscode/g2/client"
+	import "github.com/drawks/gearhulk/client"
 
 The worker package will help developers to develop Gearman's worker
 in an easy way.
 
-	import "github.com/appscode/g2/worker"
+	import "github.com/drawks/gearhulk/worker"
 */
 package g2
 
 import (
-	_ "github.com/appscode/g2/client"
-	_ "github.com/appscode/g2/worker"
+	_ "github.com/drawks/gearhulk/client"
+	_ "github.com/drawks/gearhulk/worker"
 )

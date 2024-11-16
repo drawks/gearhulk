@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net"
 
-	. "github.com/appscode/g2/pkg/runtime"
+	. "github.com/drawks/gearhulk/pkg/runtime"
 )
 
 const (
