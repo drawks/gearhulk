@@ -95,7 +95,7 @@ func runClient(cmd *cobra.Command, args []string) error {
 
 	// Read from stdin and submit jobs
 	scanner := bufio.NewScanner(os.Stdin)
-	
+
 	// Set custom delimiter if specified
 	if delimiter != "\n" {
 		scanner.Split(func(data []byte, atEOF bool) (advance int, token []byte, err error) {
@@ -125,7 +125,7 @@ func runClient(cmd *cobra.Command, args []string) error {
 
 		// Channel to receive the result for this specific job
 		resultChan := make(chan jobResult, 1)
-		
+
 		// Create response handler
 		responseHandler := func(resp *client.Response) {
 			switch resp.DataType {
