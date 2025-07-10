@@ -64,19 +64,23 @@ Examples:
 		// Create worker
 		w := worker.New(worker.Unlimited)
 		defer w.Close()
+		log.Printf("Created worker")
 		
 		// Add server
 		if err := w.AddServer(rt.Network, workerCfg.ServerAddr); err != nil {
 			log.Fatalf("Failed to add server: %v", err)
 		}
+		log.Printf("Added server: %s", workerCfg.ServerAddr)
 		
 		// Create job handler
 		jobHandler := createJobHandler(command, workerCfg.EofMode)
+		log.Printf("Created job handler")
 		
 		// Add function to worker
 		if err := w.AddFunc(workerName, jobHandler, 0); err != nil {
 			log.Fatalf("Failed to add function: %v", err)
 		}
+		log.Printf("Added function '%s' to worker", workerName)
 		
 		// Error handler
 		w.ErrorHandler = func(e error) {
@@ -87,6 +91,7 @@ Examples:
 		if err := w.Ready(); err != nil {
 			log.Fatalf("Failed to ready worker: %v", err)
 		}
+		log.Printf("Worker is ready")
 		
 		// Handle graceful shutdown
 		c := make(chan os.Signal, 1)
@@ -104,6 +109,8 @@ Examples:
 }
 
 func createJobHandler(command string, eofMode bool) func(worker.Job) ([]byte, error) {
+	log.Printf("Creating job handler for command: %s, eofMode: %v", command, eofMode)
+	
 	var cmdMutex sync.Mutex
 	var persistentCmd *exec.Cmd
 	var persistentStdin io.WriteCloser
@@ -119,26 +126,42 @@ func createJobHandler(command string, eofMode bool) func(worker.Job) ([]byte, er
 				return nil, fmt.Errorf("failed to initialize persistent subprocess: %v", err)
 			}
 		}
+		log.Printf("Started persistent subprocess for command: %s", command)
 	}
 	
+	log.Printf("Job handler created successfully")
 	return func(job worker.Job) ([]byte, error) {
 		cmdMutex.Lock()
 		defer cmdMutex.Unlock()
 		
 		data := string(job.Data())
+		log.Printf("Processing job with data: %s", data)
 		
 		if eofMode {
 			// EOF mode: create new subprocess for each job
-			return processJobWithNewSubprocess(command, data)
+			result, err := processJobWithNewSubprocess(command, data)
+			if err != nil {
+				log.Printf("Job failed: %v", err)
+			} else {
+				log.Printf("Job completed successfully")
+			}
+			return result, err
 		} else {
 			// Persistent mode: use existing subprocess
-			return processJobWithPersistentSubprocess(persistentCmd, persistentStdin, persistentStdout, data)
+			result, err := processJobWithPersistentSubprocess(persistentCmd, persistentStdin, persistentStdout, data)
+			if err != nil {
+				log.Printf("Job failed: %v", err)
+			} else {
+				log.Printf("Job completed successfully")
+			}
+			return result, err
 		}
 	}
 }
 
 func startSubprocess(command string) (*exec.Cmd, io.WriteCloser, io.ReadCloser, error) {
 	// Use shell to execute command for better parsing
+	log.Printf("Starting subprocess with command: %s", command)
 	cmd := exec.Command("sh", "-c", command)
 	
 	stdin, err := cmd.StdinPipe()
@@ -158,6 +181,7 @@ func startSubprocess(command string) (*exec.Cmd, io.WriteCloser, io.ReadCloser, 
 		return nil, nil, nil, fmt.Errorf("failed to start command: %v", err)
 	}
 	
+	log.Printf("Subprocess started successfully with PID: %d", cmd.Process.Pid)
 	return cmd, stdin, stdout, nil
 }
 
@@ -229,43 +253,61 @@ func processJobWithPersistentSubprocess(cmd *exec.Cmd, stdin io.WriteCloser, std
 		return nil, fmt.Errorf("subprocess has exited")
 	}
 	
-	// For persistent mode, send the entire job data and read the response
-	// This works well with commands like 'rev' that process line by line
-	// or commands that expect a full input and produce output
+	// For persistent mode, we'll send the data and try to read the response
+	// This is a simplified approach that works for commands that process input line by line
 	
 	// Send data to subprocess
 	if _, err := stdin.Write([]byte(data)); err != nil {
 		return nil, fmt.Errorf("failed to write to stdin: %v", err)
 	}
 	
-	// Add a newline if the data doesn't end with one
+	// Ensure data ends with newline
 	if !strings.HasSuffix(data, "\n") {
 		if _, err := stdin.Write([]byte("\n")); err != nil {
 			return nil, fmt.Errorf("failed to write newline to stdin: %v", err)
 		}
 	}
 	
-	// Read the response line by line until we get the expected number of lines
-	inputLines := strings.Split(strings.TrimSpace(data), "\n")
-	var results []string
+	// Read response with timeout
+	// For simplicity, read until we get some output
+	resultChan := make(chan []byte, 1)
+	errorChan := make(chan error, 1)
 	
-	reader := bufio.NewReader(stdout)
-	for i := 0; i < len(inputLines); i++ {
-		if inputLines[i] == "" {
-			continue
+	go func() {
+		var result []byte
+		reader := bufio.NewReader(stdout)
+		
+		// Read line by line for the expected number of input lines
+		inputLines := strings.Split(strings.TrimSpace(data), "\n")
+		outputLines := make([]string, 0, len(inputLines))
+		
+		for i := 0; i < len(inputLines); i++ {
+			if strings.TrimSpace(inputLines[i]) == "" {
+				continue
+			}
+			
+			line, err := reader.ReadString('\n')
+			if err != nil {
+				errorChan <- fmt.Errorf("failed to read line %d: %v", i+1, err)
+				return
+			}
+			
+			outputLines = append(outputLines, strings.TrimSuffix(line, "\n"))
 		}
 		
-		line, err := reader.ReadString('\n')
-		if err != nil {
-			return nil, fmt.Errorf("failed to read from stdout: %v", err)
-		}
-		
-		// Remove trailing newline
-		line = strings.TrimSuffix(line, "\n")
-		results = append(results, line)
+		result = []byte(strings.Join(outputLines, "\n"))
+		resultChan <- result
+	}()
+	
+	// Wait for result or timeout
+	select {
+	case result := <-resultChan:
+		return result, nil
+	case err := <-errorChan:
+		return nil, err
+	case <-time.After(5 * time.Second):
+		return nil, fmt.Errorf("timeout waiting for subprocess response")
 	}
-	
-	return []byte(strings.Join(results, "\n")), nil
 }
 
 func init() {
