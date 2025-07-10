@@ -26,5 +26,5 @@ func getError(data []byte) (err error) {
 	return
 }
 
-// Error handler
+// ErrorHandler is a callback function for handling errors.
 type ErrorHandler func(error)

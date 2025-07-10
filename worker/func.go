@@ -5,9 +5,10 @@ import (
 	"runtime"
 )
 
-// Job handler
+// JobHandler is a callback function for handling job lifecycle events.
 type JobHandler func(Job) error
 
+// JobFunc is a function that processes a job and returns the result.
 type JobFunc func(Job) ([]byte, error)
 
 // The definition of the callback function.

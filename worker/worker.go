@@ -16,8 +16,8 @@ const (
 	OneByOne
 )
 
-// Worker is the only structure needed by worker side developing.
-// It can connect to multi-server and grab jobs.
+// Worker is the main structure for worker side development.
+// It can connect to multiple servers and grab jobs for processing.
 type Worker struct {
 	sync.Mutex
 	agents  []*agent
@@ -39,13 +39,15 @@ type Worker struct {
 	limit        chan bool
 }
 
-// Return a worker.
+// New creates a new Worker instance.
 //
-// If limit is set to Unlimited(=0), the worker will grab all jobs
-// and execute them parallelly.
-// If limit is greater than zero, the number of paralled executing
-// jobs are limited under the number. If limit is assigned to
-// OneByOne(=1), there will be only one job executed in a time.
+// Parameters:
+//   - limit: Concurrency limit for job execution
+//     - Unlimited (0): Execute all jobs in parallel
+//     - OneByOne (1): Execute only one job at a time
+//     - Other values: Limit parallel execution to that number
+//
+// Returns a new Worker instance ready to be configured.
 func New(limit int) (worker *Worker) {
 	worker = &Worker{
 		agents: make([]*agent, 0, limit),
@@ -65,9 +67,13 @@ func (worker *Worker) err(e error) {
 	}
 }
 
-// Add a Gearman job server.
+// AddServer adds a Gearman job server.
 //
-// addr should be formatted as 'host:port'.
+// Parameters:
+//   - net: Network type (typically "tcp")
+//   - addr: Server address formatted as 'host:port'
+//
+// Returns an error if the connection fails.
 func (worker *Worker) AddServer(net, addr string) (err error) {
 	// Create a new job server's client as a agent of server
 	a, err := newAgent(net, addr, worker)
@@ -85,8 +91,14 @@ func (worker *Worker) broadcast(outpack *outPack) {
 	}
 }
 
-// Add a function.
-// Set timeout as Unlimited(=0) to disable executing timeout.
+// AddFunc adds a function that the worker can execute.
+//
+// Parameters:
+//   - funcname: The name of the function to register
+//   - f: The JobFunc to execute when called
+//   - timeout: Execution timeout in seconds (Unlimited=0 disables timeout)
+//
+// Returns an error if the function is already registered.
 func (worker *Worker) AddFunc(funcname string,
 	f JobFunc, timeout uint32) (err error) {
 	worker.Lock()

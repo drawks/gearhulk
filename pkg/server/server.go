@@ -25,12 +25,14 @@ import (
 	"gopkg.in/robfig/cron.v2"
 )
 
+// Config holds the configuration for the Gearman server.
 type Config struct {
-	ListenAddr string
-	Storage    string
-	WebAddress string
+	ListenAddr string // Address to listen on for Gearman protocol connections
+	Storage    string // Directory path for LevelDB storage
+	WebAddress string // Address for HTTP API and web interface
 }
 
+// Server represents a Gearman server instance.
 type Server struct {
 	config         Config
 	protoEvtCh     chan *event
@@ -53,6 +55,12 @@ var ( //const replys, to avoid building it every time
 	nojobReply  = constructReply(PT_NoJob, nil)
 )
 
+// NewServer creates a new Gearman server instance.
+//
+// Parameters:
+//   - cfg: Configuration for the server
+//
+// Returns a new Server instance ready to be started.
 func NewServer(cfg Config) *Server {
 	srv := &Server{
 		config:     cfg,
@@ -127,6 +135,8 @@ func (s *Server) loadAllCronJobs() {
 	}
 }
 
+// Start starts the Gearman server.
+// This method will block and run the server until it's stopped.
 func (s *Server) Start() {
 	ln, err := net.Listen("tcp", s.config.ListenAddr)
 	if err != nil {
