@@ -1,3 +1,5 @@
+permissions:
+  contents: read
 name: Run tests and upload coverage to codecov
 on: 
   push
