@@ -9,14 +9,14 @@ import (
 	rt "github.com/drawks/gearhulk/pkg/runtime"
 )
 
-// Response handler
+// ResponseHandler is a callback function for handling job responses.
 type ResponseHandler func(*Response)
 
-// response
+// Response represents a response from the Gearman server.
 type Response struct {
-	DataType  rt.PT
-	Data, UID []byte
-	Handle    string
+	DataType  rt.PT    // Protocol type
+	Data, UID []byte   // Response data and unique identifier
+	Handle    string   // Job handle
 }
 
 // Extract the Response's result.

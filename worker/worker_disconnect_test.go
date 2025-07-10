@@ -145,6 +145,12 @@ func TestBasicDisconnect(t *testing.T) {
 		if !was_dc_err {
 			t.Error("Disconnect didn't manifest as a net.OpError?")
 		}
+		if !handled_errors {
+			t.Error("Error handler was not called")
+		}
+		if work_done {
+			t.Error("Work was completed when it shouldn't have been")
+		}
 	}
 	worker.Close()
 	kill_gearman <- true
@@ -223,6 +229,10 @@ func TestDcRc(t *testing.T) {
 
 	select {
 	case <-done:
+		// Test passed - work was completed successfully after reconnection
+		if !work_done {
+			t.Error("Work was not completed after reconnection")
+		}
 	case <-timeout:
 		t.Error("Test timed out")
 	}

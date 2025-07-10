@@ -19,7 +19,8 @@ var (
 	DefaultTimeout time.Duration = time.Second
 )
 
-// One client connect to one server.
+// Client represents a Gearman client connection.
+// One client connects to one server.
 // Use Pool for multi-connections.
 type Client struct {
 	sync.Mutex
@@ -63,7 +64,12 @@ func (r *responseHandlerMap) put(key string, rh ResponseHandler) {
 	r.Unlock()
 }
 
-// Return a client.
+// New creates a new Gearman client connection.
+// Parameters:
+//   - network: The network type (typically "tcp")
+//   - addr: The server address (e.g., "127.0.0.1:4730")
+//
+// Returns a new Client instance or an error if connection fails.
 func New(network, addr string) (client *Client, err error) {
 	client = &Client{
 		net:             network,
@@ -251,8 +257,14 @@ func (client *Client) do(funcname string, data []byte, flag rt.PT) (handle strin
 	return
 }
 
-// Call the function and get a response.
-// flag can be set to: JobLow, JobNormal and JobHigh
+// Do calls the function and gets a response.
+// Parameters:
+//   - funcname: The name of the function to call
+//   - data: The data to pass to the function
+//   - flag: Priority flag (JobLow, JobNormal, JobHigh)
+//   - h: Response handler to process the result
+//
+// Returns the job handle and an error if the operation fails.
 func (client *Client) Do(funcname string, data []byte,
 	flag byte, h ResponseHandler) (handle string, err error) {
 	var datatype rt.PT
@@ -271,8 +283,13 @@ func (client *Client) Do(funcname string, data []byte,
 	return
 }
 
-// Call the function in background, no response needed.
-// flag can be set to: JobLow, JobNormal and JobHigh
+// DoBg calls the function in background, no response needed.
+// Parameters:
+//   - funcname: The name of the function to call
+//   - data: The data to pass to the function
+//   - flag: Priority flag (JobLow, JobNormal, JobHigh)
+//
+// Returns the job handle and an error if the operation fails.
 func (client *Client) DoBg(funcname string, data []byte, flag byte) (handle string, err error) {
 	var datatype rt.PT
 	switch flag {
@@ -287,6 +304,13 @@ func (client *Client) DoBg(funcname string, data []byte, flag byte) (handle stri
 	return
 }
 
+// DoCron schedules a function to run on a cron schedule.
+// Parameters:
+//   - funcname: The name of the function to call
+//   - cronExpr: The cron expression for scheduling
+//   - funcParam: The data to pass to the function
+//
+// Returns the job handle and an error if the operation fails.
 func (client *Client) DoCron(funcname string, cronExpr string, funcParam []byte) (string, error) {
 	cf := strings.Fields(cronExpr)
 	expLen := len(cf)
@@ -319,6 +343,13 @@ func (client *Client) doCron(funcname string, cronExpr string, funcParam []byte)
 	return
 }
 
+// DoAt schedules a function to run at a specific time.
+// Parameters:
+//   - funcname: The name of the function to call
+//   - epoch: The Unix timestamp when the job should run
+//   - funcParam: The data to pass to the function
+//
+// Returns the job handle and an error if the operation fails.
 func (client *Client) DoAt(funcname string, epoch int64, funcParam []byte) (handle string, err error) {
 	if client.conn == nil {
 		return "", ErrLostConn
@@ -328,7 +359,11 @@ func (client *Client) DoAt(funcname string, epoch int64, funcParam []byte) (hand
 	return
 }
 
-// Get job status from job server.
+// Status gets job status from job server.
+// Parameters:
+//   - handle: The job handle to check status for
+//
+// Returns the job status and an error if the operation fails.
 func (client *Client) Status(handle string) (status *Status, err error) {
 	if client.conn == nil {
 		return nil, ErrLostConn
@@ -351,7 +386,13 @@ func (client *Client) Status(handle string) (status *Status, err error) {
 	return
 }
 
-// Echo.
+// Echo sends data to the server and receives it back.
+// This is useful for testing connectivity and server responsiveness.
+//
+// Parameters:
+//   - data: The data to echo
+//
+// Returns the echoed data and an error if the operation fails.
 func (client *Client) Echo(data []byte) (echo []byte, err error) {
 	if client.conn == nil {
 		return nil, ErrLostConn
@@ -370,7 +411,8 @@ func (client *Client) Echo(data []byte) (echo []byte, err error) {
 	return
 }
 
-// Close connection
+// Close closes the client connection.
+// Returns an error if the close operation fails.
 func (client *Client) Close() (err error) {
 	client.Lock()
 	defer client.Unlock()
