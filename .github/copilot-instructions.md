@@ -1,7 +1,11 @@
 # GitHub Copilot Instructions for Gearhulk
 
 ## Overview
-Gearhulk is a modern implementation of Gearman in Go, designed for use in Kubernetes with built-in Prometheus metrics and scheduled job support via cron expressions.
+Gearhulk is a modern implementation of Gearman in Go, designed for use in lightweight deployments.
+It uses Prometheus/OpenMetrics for telemetry exposition.
+It has scheduled job support via cron expressions.
+It implements a usable server, client and various utilities with a single static commandline executable.
+The client, server, and other reusable components are also usable as importable go libraries for direct integration.
 
 ## Code Standards and Guidelines
 
@@ -86,8 +90,7 @@ When implementing network APIs:
 
 ### 7. Repository-Specific Guidelines
 - This is a Gearman implementation, so maintain compatibility with the Gearman protocol
-- Support Kubernetes deployment patterns
-- Include Prometheus metrics for monitoring
+- Include Prometheus/OpenMetrics telemetry for monitoring
 - Support both client and worker modes
 - Provide admin interface for job management
 - Use LevelDB for persistent storage by default
@@ -98,6 +101,7 @@ When implementing network APIs:
 - Test error conditions and edge cases
 - Use table-driven tests for multiple scenarios
 - Mock external dependencies in unit tests
+- ** ALL PROJECT CODE** should consider testability as a first order concern. Where possible make dependencies injectable to maximize the ease with which units may be isolated.
 - Provide test utilities for common setup/teardown
 
 ### 9. Documentation Guidelines
