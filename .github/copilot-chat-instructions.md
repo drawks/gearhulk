@@ -4,16 +4,18 @@ You are assisting with development of Gearhulk, a modern Gearman implementation 
 
 ## Project Context
 - This is a job queue system implementing the Gearman protocol
-- Written in Go with focus on Kubernetes deployment
+- Written in Go with a focus on lightweight deployments
 - Uses LevelDB for persistence and includes Prometheus metrics
 - Supports both synchronous and asynchronous job processing
 
 ## Code Quality Standards
-1. Always suggest adding tests for new functionality
-2. Follow Go best practices and idioms
-3. Use proper error handling (never ignore errors)
-4. Include comprehensive documentation for public APIs
-5. Follow the existing code style and patterns
+1. All new functionality requires test coverage
+2. All bug fixes require regression tests that demonstrate the bug
+3. Follow Go best practices and idioms
+4. Use proper error handling (never ignore errors)
+5. Include comprehensive documentation for public APIs
+6. Do not be overly concerned with maintaining existing codestyle if/when it significantly deviates from modern acceptable standards
+7. Do not mix functional changes with pure formatting changes in the same commit
 
 ## CLI Standards
 - Use cobra for command-line interfaces
@@ -22,7 +24,7 @@ You are assisting with development of Gearhulk, a modern Gearman implementation 
 - Provide sensible defaults or show help when no args given
 
 ## API Design
-- Keep interfaces simple and focused
+- Keep interfaces simple and focused, if possible and sensible always strive for compatibility with an existing common interface
 - Use context.Context for cancellation/timeouts
 - Follow Go naming conventions
 - Make APIs flexible and composable
