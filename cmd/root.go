@@ -28,16 +28,30 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "gearhulk",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "A modern Gearman implementation in Go",
+	Long: `Gearhulk is a modern implementation of Gearman in Go Programming Language.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+Gearhulk includes various improvements in retry and connection logic for using
+in Kubernetes. It comes with built-in Prometheus ready metrics. Gearhulk also
+implements scheduled jobs via cron expressions.
+
+The server can be used as a job queue manager, while clients can submit jobs
+and workers can process them. It includes a web interface for monitoring and
+managing jobs.
+
+Examples:
+  # Start the Gearman server
+  gearhulk server
+
+  # Start server on specific address with custom storage
+  gearhulk server --addr 0.0.0.0:4730 --storage-dir /var/lib/gearhulk
+
+  # Show help for server command
+  gearhulk server --help`,
+	// When no subcommand is provided, show help
+	Run: func(cmd *cobra.Command, args []string) {
+		cmd.Help()
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -56,11 +70,10 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gearhulk.yaml)")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.gearhulk.yaml)")
 
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// Remove the toggle flag as it's not needed
+	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.

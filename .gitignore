@@ -26,3 +26,6 @@ dist/
 .vscode/
 coverage.txt
 profile.out
+
+# Binary
+gearhulk

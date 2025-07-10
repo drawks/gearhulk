@@ -41,11 +41,11 @@ Usage
 ## Server
 	how to start the gearman server?
 
-	./igearhulk server --v=3 --addr="0.0.0.0:4730"
+	./gearhulk server --verbose --addr="0.0.0.0:4730"
 
 	how to specify leveldb location?
 
-	./gearihulk server --v=3 --storage-dir=/my-dir --addr="0.0.0.0:4730"
+	./gearhulk server --verbose --storage-dir=/my-dir --addr="0.0.0.0:4730"
 
 how to export metrics to Prometheus:
 
@@ -69,7 +69,7 @@ how to query job status ?
 
 how to change monitor address ?
 
-	./gearhulk server --v=3 --web.addr=:4567
+	./gearhulk server --verbose --web-addr=:4567
 
 ## Worker
 

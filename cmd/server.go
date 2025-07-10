@@ -32,7 +32,32 @@ import (
 
 var cfg gearmand.Config
 var serverCmd = &cobra.Command{
-	Use: "server",
+	Use:   "server",
+	Short: "Start the Gearman server",
+	Long: `Start the Gearman server with the specified configuration.
+
+The server will listen for job submissions from clients and dispatch
+them to available workers. It includes a web interface for monitoring
+and managing jobs, as well as built-in Prometheus metrics.
+
+The server uses LevelDB for persistent storage by default and supports
+scheduled jobs via cron expressions.
+
+Examples:
+  # Start server with default settings
+  gearhulk server
+
+  # Start server on specific address
+  gearhulk server --addr 0.0.0.0:4730
+
+  # Start server with custom storage directory
+  gearhulk server --storage-dir /var/lib/gearhulk
+
+  # Start server with custom web interface address
+  gearhulk server --web-addr :8080
+
+  # Start server with verbose logging
+  gearhulk server --addr 0.0.0.0:4730 --verbose`,
 	PersistentPreRun: func(c *cobra.Command, args []string) {
 		c.Flags().VisitAll(func(flag *pflag.Flag) {
 			log.Printf("FLAG: --%s=%q", flag.Name, flag.Value)
@@ -48,7 +73,12 @@ var serverCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serverCmd)
-	serverCmd.Flags().StringVar(&cfg.ListenAddr, "addr", ":4730", "listening on, such as 0.0.0.0:4730")
-	serverCmd.Flags().StringVar(&cfg.Storage, "storage-dir", os.TempDir()+"/gearmand", "Directory where LevelDB file is stored.")
-	serverCmd.Flags().StringVar(&cfg.WebAddress, "web.addr", ":3000", "Server HTTP api Address")
+	
+	// GNU-style flags with both short and long forms
+	serverCmd.Flags().StringVarP(&cfg.ListenAddr, "addr", "a", ":4730", "listening address, such as 0.0.0.0:4730")
+	serverCmd.Flags().StringVarP(&cfg.Storage, "storage-dir", "s", os.TempDir()+"/gearmand", "directory where LevelDB file is stored")
+	serverCmd.Flags().StringVarP(&cfg.WebAddress, "web-addr", "w", ":3000", "server HTTP API address")
+	
+	// Add verbose flag for logging
+	serverCmd.Flags().BoolP("verbose", "v", false, "enable verbose logging")
 }
